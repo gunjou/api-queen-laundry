@@ -1,0 +1,562 @@
+basePath: /
+definitions:
+  customer.CreateCustomerRequest:
+    properties:
+      alamat:
+        type: string
+      nama:
+        type: string
+      no_hp:
+        type: string
+    required:
+    - nama
+    type: object
+  customer.UpdateCustomerRequest:
+    properties:
+      alamat:
+        type: string
+      nama:
+        type: string
+      no_hp:
+        type: string
+    required:
+    - nama
+    type: object
+  order.CreateOrderRequest:
+    properties:
+      berat:
+        type: number
+      catatan:
+        type: string
+      id_customer:
+        type: integer
+      id_service:
+        type: integer
+      langsung_bayar:
+        type: boolean
+      metode:
+        type: string
+    required:
+    - berat
+    - id_service
+    type: object
+  order.UpdateOrderPaymentRequest:
+    properties:
+      jumlah:
+        type: number
+      metode:
+        type: string
+    required:
+    - jumlah
+    - metode
+    type: object
+  order.UpdateOrderRequest:
+    properties:
+      berat:
+        type: number
+      catatan:
+        type: string
+    type: object
+  order.UpdateOrderStatusRequest:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
+  payment.CreatePaymentRequest:
+    properties:
+      id_order:
+        type: integer
+      jumlah:
+        type: number
+      metode:
+        type: string
+    required:
+    - id_order
+    - jumlah
+    - metode
+    type: object
+  service.CreateServiceRequest:
+    properties:
+      harga:
+        type: number
+      nama:
+        type: string
+      tipe:
+        type: string
+    required:
+    - harga
+    - nama
+    - tipe
+    type: object
+  service.UpdateServiceRequest:
+    properties:
+      harga:
+        type: number
+      nama:
+        type: string
+      tipe:
+        type: string
+    required:
+    - harga
+    - nama
+    - tipe
+    type: object
+host: localhost:5050
+info:
+  contact: {}
+  description: API untuk sistem laundry
+  title: Queen Laundry API
+  version: "1.0"
+paths:
+  /customers:
+    get:
+      description: Ambil semua customer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all customers
+      tags:
+      - customers
+    post:
+      consumes:
+      - application/json
+      description: Tambah customer
+      parameters:
+      - description: Customer Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/customer.CreateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create customer
+      tags:
+      - customers
+  /customers/{id}:
+    delete:
+      description: Soft delete customer
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete customer
+      tags:
+      - customers
+    get:
+      description: Ambil customer berdasarkan ID
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get customer by ID
+      tags:
+      - customers
+    put:
+      consumes:
+      - application/json
+      description: Update data customer
+      parameters:
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Customer Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/customer.UpdateCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update customer
+      tags:
+      - customers
+  /orders:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all orders
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create order
+      tags:
+      - orders
+  /orders/{id}:
+    delete:
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete order
+      tags:
+      - orders
+    get:
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get order by ID
+      tags:
+      - orders
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Order Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update order
+      tags:
+      - orders
+  /orders/{id}/payment:
+    put:
+      consumes:
+      - application/json
+      description: Input pembayaran dan update status jadi SUDAH_BAYAR
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Payment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update order payment
+      tags:
+      - orders
+  /orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update status order (DITERIMA, DIPROSES, SELESAI, DIAMBIL)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update order status
+      tags:
+      - orders
+  /orders/active:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get active orders
+      tags:
+      - orders
+  /orders/completed:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get completed orders
+      tags:
+      - orders
+  /orders/summary:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get order summary
+      tags:
+      - orders
+  /payments:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all payments
+      tags:
+      - payments
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Payment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.CreatePaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create payment
+      tags:
+      - payments
+  /payments/{id}:
+    get:
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get payment by ID
+      tags:
+      - payments
+  /services:
+    get:
+      description: Ambil semua layanan
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      summary: Get all services
+      tags:
+      - services
+    post:
+      consumes:
+      - application/json
+      description: Tambah layanan laundry
+      parameters:
+      - description: Service Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/service.CreateServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create service
+      tags:
+      - services
+  /services/{id}:
+    delete:
+      description: Soft delete service (is_active = 0)
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete service
+      tags:
+      - services
+    get:
+      description: Ambil service berdasarkan ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get service by ID
+      tags:
+      - services
+    put:
+      consumes:
+      - application/json
+      description: Update layanan berdasarkan ID
+      parameters:
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Service Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update service
+      tags:
+      - services
+swagger: "2.0"
