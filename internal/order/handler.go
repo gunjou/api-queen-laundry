@@ -47,6 +47,7 @@ type UpdateOrderPaymentRequest struct {
 // @Tags orders
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body CreateOrderRequest true "Order Data"
 // @Success 200 {object} map[string]interface{}
 // @Router /orders [post]
@@ -90,6 +91,7 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 // @Summary Get all orders
 // @Tags orders
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /orders [get]
 func (h *Handler) GetOrders(c *gin.Context) {
@@ -105,6 +107,7 @@ func (h *Handler) GetOrders(c *gin.Context) {
 // GetOrderByID godoc
 // @Summary Get order by ID
 // @Tags orders
+// @Security BearerAuth
 // @Param id path int true "Order ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /orders/{id} [get]
@@ -129,6 +132,7 @@ func (h *Handler) GetOrderByID(c *gin.Context) {
 // @Summary Update order
 // @Tags orders
 // @Accept json
+// @Security BearerAuth
 // @Param id path int true "Order ID"
 // @Param request body UpdateOrderRequest true "Order Data"
 // @Success 200 {object} map[string]interface{}
@@ -159,6 +163,7 @@ func (h *Handler) UpdateOrder(c *gin.Context) {
 // DeleteOrder godoc
 // @Summary Delete order
 // @Tags orders
+// @Security BearerAuth
 // @Param id path int true "Order ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /orders/{id} [delete]
@@ -185,6 +190,7 @@ func (h *Handler) DeleteOrder(c *gin.Context) {
 // @Tags orders
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Order ID"
 // @Param request body UpdateOrderStatusRequest true "Status Data"
 // @Success 200 {object} map[string]interface{}
@@ -225,6 +231,7 @@ func (h *Handler) UpdateOrderStatus(c *gin.Context) {
 // @Tags orders
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Order ID"
 // @Param request body UpdateOrderPaymentRequest true "Payment Data"
 // @Success 200 {object} map[string]interface{}
@@ -264,6 +271,7 @@ func (h *Handler) UpdateOrderPayment(c *gin.Context) {
 // @Summary Get active orders
 // @Tags orders
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /orders/active [get]
 func (h *Handler) GetActiveOrders(c *gin.Context) {
@@ -280,6 +288,7 @@ func (h *Handler) GetActiveOrders(c *gin.Context) {
 // @Summary Get completed orders
 // @Tags orders
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /orders/completed [get]
 func (h *Handler) GetCompletedOrders(c *gin.Context) {
@@ -296,6 +305,7 @@ func (h *Handler) GetCompletedOrders(c *gin.Context) {
 // @Summary Get order summary
 // @Tags orders
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {object} map[string]interface{}
 // @Router /orders/summary [get]
 func (h *Handler) GetOrderSummary(c *gin.Context) {

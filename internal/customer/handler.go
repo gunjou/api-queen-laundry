@@ -37,6 +37,7 @@ type UpdateCustomerRequest struct {
 // @Tags customers
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body CreateCustomerRequest true "Customer Data"
 // @Success 200 {object} map[string]interface{}
 // @Router /customers [post]
@@ -64,6 +65,7 @@ func (h *Handler) CreateCustomer(c *gin.Context) {
 // @Description Ambil semua customer
 // @Tags customers
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /customers [get]
 func (h *Handler) GetCustomers(c *gin.Context) {
@@ -82,6 +84,7 @@ func (h *Handler) GetCustomers(c *gin.Context) {
 // @Description Ambil customer berdasarkan ID
 // @Tags customers
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Customer ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /customers/{id} [get]
@@ -111,6 +114,7 @@ func (h *Handler) GetCustomerByID(c *gin.Context) {
 // @Tags customers
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Customer ID"
 // @Param request body UpdateCustomerRequest true "Customer Data"
 // @Success 200 {object} map[string]interface{}
@@ -145,6 +149,7 @@ func (h *Handler) UpdateCustomer(c *gin.Context) {
 // @Summary Delete customer
 // @Description Soft delete customer
 // @Tags customers
+// @Security BearerAuth
 // @Param id path int true "Customer ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /customers/{id} [delete]

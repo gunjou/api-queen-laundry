@@ -36,6 +36,7 @@ type UpdateServiceRequest struct {
 // @Tags services
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body CreateServiceRequest true "Service Data"
 // @Success 200 {object} map[string]interface{}
 // @Router /services [post]
@@ -63,6 +64,7 @@ func (h *Handler) CreateService(c *gin.Context) {
 // @Description Ambil semua layanan
 // @Tags services
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /services [get]
 func (h *Handler) GetServices(c *gin.Context) {
@@ -81,6 +83,7 @@ func (h *Handler) GetServices(c *gin.Context) {
 // @Description Ambil service berdasarkan ID
 // @Tags services
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Service ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /services/{id} [get]
@@ -110,6 +113,7 @@ func (h *Handler) GetServiceByID(c *gin.Context) {
 // @Tags services
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Service ID"
 // @Param request body UpdateServiceRequest true "Service Data"
 // @Success 200 {object} map[string]interface{}
@@ -144,6 +148,7 @@ func (h *Handler) UpdateService(c *gin.Context) {
 // @Summary Delete service
 // @Description Soft delete service (is_active = 0)
 // @Tags services
+// @Security BearerAuth
 // @Param id path int true "Service ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /services/{id} [delete]

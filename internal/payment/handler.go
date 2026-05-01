@@ -28,6 +28,7 @@ type CreatePaymentRequest struct {
 // @Tags payments
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param request body CreatePaymentRequest true "Payment Data"
 // @Success 200 {object} map[string]interface{}
 // @Router /payments [post]
@@ -57,6 +58,7 @@ func (h *Handler) CreatePayment(c *gin.Context) {
 // @Summary Get all payments
 // @Tags payments
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} map[string]interface{}
 // @Router /payments [get]
 func (h *Handler) GetPayments(c *gin.Context) {
@@ -73,6 +75,7 @@ func (h *Handler) GetPayments(c *gin.Context) {
 // GetPaymentByID godoc
 // @Summary Get payment by ID
 // @Tags payments
+// @Security BearerAuth
 // @Param id path int true "Payment ID"
 // @Success 200 {object} map[string]interface{}
 // @Router /payments/{id} [get]

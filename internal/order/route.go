@@ -5,12 +5,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterRoutes(r *gin.Engine, db *pgxpool.Pool) {
+func RegisterRoutes(rg *gin.RouterGroup, db *pgxpool.Pool) {
 	repo := NewRepository(db)
 	svc := NewService(repo)
 	handler := NewHandler(svc)
 
-	group := r.Group("/orders")
+	group := rg.Group("/orders")
 	{
 		group.POST("", handler.CreateOrder)
 		group.GET("", handler.GetOrders)

@@ -1,5 +1,15 @@
 basePath: /
 definitions:
+  auth.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   customer.CreateCustomerRequest:
     properties:
       alamat:
@@ -110,6 +120,28 @@ info:
   title: Queen Laundry API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login
+      tags:
+      - auth
   /customers:
     get:
       description: Ambil semua customer
@@ -123,6 +155,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get all customers
       tags:
       - customers
@@ -145,6 +179,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create customer
       tags:
       - customers
@@ -163,6 +199,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete customer
       tags:
       - customers
@@ -182,6 +220,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get customer by ID
       tags:
       - customers
@@ -209,6 +249,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update customer
       tags:
       - customers
@@ -224,6 +266,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get all orders
       tags:
       - orders
@@ -245,6 +289,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create order
       tags:
       - orders
@@ -262,6 +308,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete order
       tags:
       - orders
@@ -278,6 +326,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get order by ID
       tags:
       - orders
@@ -302,6 +352,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update order
       tags:
       - orders
@@ -330,6 +382,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update order payment
       tags:
       - orders
@@ -358,6 +412,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update order status
       tags:
       - orders
@@ -373,6 +429,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get active orders
       tags:
       - orders
@@ -388,6 +446,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get completed orders
       tags:
       - orders
@@ -401,6 +461,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get order summary
       tags:
       - orders
@@ -416,6 +478,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get all payments
       tags:
       - payments
@@ -437,6 +501,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create payment
       tags:
       - payments
@@ -454,6 +520,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get payment by ID
       tags:
       - payments
@@ -470,6 +538,8 @@ paths:
               additionalProperties: true
               type: object
             type: array
+      security:
+      - BearerAuth: []
       summary: Get all services
       tags:
       - services
@@ -492,6 +562,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Create service
       tags:
       - services
@@ -510,6 +582,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete service
       tags:
       - services
@@ -529,6 +603,8 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Get service by ID
       tags:
       - services
@@ -556,7 +632,14 @@ paths:
           schema:
             additionalProperties: true
             type: object
+      security:
+      - BearerAuth: []
       summary: Update service
       tags:
       - services
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
