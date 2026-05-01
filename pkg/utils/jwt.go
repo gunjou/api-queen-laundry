@@ -1,14 +1,15 @@
 package utils
 
 import (
+	"queen-laundry/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var SECRET_KEY = []byte("SECRET_LAUNDRY")
 
 func GenerateJWT(userID int, username string) (string, error) {
+	cfg := config.LoadConfig()
 
 	claims := jwt.MapClaims{
 		"id_user":  userID,
@@ -18,5 +19,5 @@ func GenerateJWT(userID int, username string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(SECRET_KEY)
+	return token.SignedString(cfg.JwtSecret)
 }

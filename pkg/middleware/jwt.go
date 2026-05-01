@@ -2,9 +2,8 @@ package middleware
 
 import (
 	"net/http"
+	"queen-laundry/config"
 	"strings"
-
-	"queen-laundry/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -12,6 +11,7 @@ import (
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		cfg := config.LoadConfig()
 
 		authHeader := c.GetHeader("Authorization")
 
@@ -37,7 +37,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		// parse token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return utils.SECRET_KEY, nil
+			return cfg.JwtSecret, nil
 		})
 
 		if err != nil || !token.Valid {
