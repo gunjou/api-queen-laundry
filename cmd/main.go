@@ -23,7 +23,7 @@ import (
 // @version 1.0
 // @description API untuk sistem laundry
 
-// @host localhost:5050
+// @host api.queenlaundry.shop
 // @BasePath /
 
 // JWT CONFIG
