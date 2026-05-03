@@ -13,6 +13,7 @@ import (
 	"queen-laundry/internal/customer"
 	"queen-laundry/internal/order"
 	"queen-laundry/internal/payment"
+	"queen-laundry/internal/report"
 	"queen-laundry/internal/service"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -68,6 +69,7 @@ func main() {
 	customer.RegisterRoutes(protected, db)
 	payment.RegisterRoutes(protected, db)
 	service.RegisterRoutes(protected, db)
+	report.RegisterRoutes(protected, db)
 	_ = db
 
 	r.Run(":" + cfg.Port)

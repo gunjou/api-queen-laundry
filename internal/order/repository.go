@@ -25,13 +25,13 @@ func (r *Repository) CreateOrder(
 	catatan string,
 	metode *string,
 	langsungBayar bool,
-) error {
+) (string, error) {
 
 	now := utils.GetNowWITA()
 
 	tx, err := r.db.Begin(ctx)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer tx.Rollback(ctx)
 
@@ -42,7 +42,7 @@ func (r *Repository) CreateOrder(
 		idService,
 	).Scan(&hargaService)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	hargaFinal := berat * hargaService
@@ -80,7 +80,7 @@ func (r *Repository) CreateOrder(
 			$8,
 			$9,$9,$9
 		)
-		RETURNING id_order
+		RETURNING id_order, kode_invoice
 	`
 
 	err = tx.QueryRow(ctx, queryOrder,
@@ -93,10 +93,10 @@ func (r *Repository) CreateOrder(
 		paymentStatus,
 		catatan,
 		now,
-	).Scan(&orderID)
+	).Scan(&orderID, &invoice)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// ================= INSERT PAYMENT (HANYA JIKA BAYAR) =================
@@ -122,11 +122,16 @@ func (r *Repository) CreateOrder(
 		)
 
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
-	return tx.Commit(ctx)
+	err = tx.Commit(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return invoice, nil
 }
 
 

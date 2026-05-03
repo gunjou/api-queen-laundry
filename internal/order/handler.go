@@ -67,7 +67,7 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	err := h.service.CreateOrder(
+	invoice, err := h.service.CreateOrder(
 		c,
 		req.IdCustomer,
 		req.IdService,
@@ -84,6 +84,7 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "order created",
+		"invoice": invoice,
 	})
 }
 

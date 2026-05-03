@@ -20,7 +20,7 @@ func (s *Service) CreateOrder(
 	catatan string,
 	metode *string,
 	langsungBayar bool,
-) error {
+) (string, error) {
 	return s.repo.CreateOrder(ctx, idCustomer, idService, berat, catatan, metode, langsungBayar)
 }
 

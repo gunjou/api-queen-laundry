@@ -7,8 +7,8 @@ definitions:
       username:
         type: string
     required:
-      - password
-      - username
+    - password
+    - username
     type: object
   customer.CreateCustomerRequest:
     properties:
@@ -19,7 +19,7 @@ definitions:
       no_hp:
         type: string
     required:
-      - nama
+    - nama
     type: object
   customer.UpdateCustomerRequest:
     properties:
@@ -30,7 +30,7 @@ definitions:
       no_hp:
         type: string
     required:
-      - nama
+    - nama
     type: object
   order.CreateOrderRequest:
     properties:
@@ -47,8 +47,8 @@ definitions:
       metode:
         type: string
     required:
-      - berat
-      - id_service
+    - berat
+    - id_service
     type: object
   order.UpdateOrderPaymentRequest:
     properties:
@@ -57,8 +57,8 @@ definitions:
       metode:
         type: string
     required:
-      - jumlah
-      - metode
+    - jumlah
+    - metode
     type: object
   order.UpdateOrderRequest:
     properties:
@@ -72,7 +72,7 @@ definitions:
       status:
         type: string
     required:
-      - status
+    - status
     type: object
   payment.CreatePaymentRequest:
     properties:
@@ -83,9 +83,9 @@ definitions:
       metode:
         type: string
     required:
-      - id_order
-      - jumlah
-      - metode
+    - id_order
+    - jumlah
+    - metode
     type: object
   service.CreateServiceRequest:
     properties:
@@ -96,9 +96,9 @@ definitions:
       tipe:
         type: string
     required:
-      - harga
-      - nama
-      - tipe
+    - harga
+    - nama
+    - tipe
     type: object
   service.UpdateServiceRequest:
     properties:
@@ -109,9 +109,9 @@ definitions:
       tipe:
         type: string
     required:
-      - harga
-      - nama
-      - tipe
+    - harga
+    - nama
+    - tipe
     type: object
 host: api.queenlaundry.shop
 info:
@@ -123,16 +123,16 @@ paths:
   /auth/login:
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: Login Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/auth.LoginRequest"
+      - description: Login Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -141,12 +141,12 @@ paths:
             type: object
       summary: Login
       tags:
-        - auth
+      - auth
   /customers:
     get:
       description: Ambil semua customer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -156,23 +156,23 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get all customers
       tags:
-        - customers
+      - customers
     post:
       consumes:
-        - application/json
+      - application/json
       description: Tambah customer
       parameters:
-        - description: Customer Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/customer.CreateCustomerRequest"
+      - description: Customer Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/customer.CreateCustomerRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -180,19 +180,19 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create customer
       tags:
-        - customers
+      - customers
   /customers/{id}:
     delete:
       description: Soft delete customer
       parameters:
-        - description: Customer ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -200,20 +200,20 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Delete customer
       tags:
-        - customers
+      - customers
     get:
       description: Ambil customer berdasarkan ID
       parameters:
-        - description: Customer ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -221,28 +221,28 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get customer by ID
       tags:
-        - customers
+      - customers
     put:
       consumes:
-        - application/json
+      - application/json
       description: Update data customer
       parameters:
-        - description: Customer ID
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Customer Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/customer.UpdateCustomerRequest"
+      - description: Customer ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Customer Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/customer.UpdateCustomerRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -250,14 +250,14 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update customer
       tags:
-        - customers
+      - customers
   /orders:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -267,22 +267,22 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get all orders
       tags:
-        - orders
+      - orders
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: Order Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/order.CreateOrderRequest"
+      - description: Order Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.CreateOrderRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -290,18 +290,18 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create order
       tags:
-        - orders
+      - orders
   /orders/{id}:
     delete:
       parameters:
-        - description: Order ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -309,17 +309,17 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Delete order
       tags:
-        - orders
+      - orders
     get:
       parameters:
-        - description: Order ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -327,25 +327,25 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get order by ID
       tags:
-        - orders
+      - orders
     put:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: Order ID
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Order Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/order.UpdateOrderRequest"
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Order Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderRequest'
       responses:
         "200":
           description: OK
@@ -353,29 +353,29 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update order
       tags:
-        - orders
+      - orders
   /orders/{id}/payment:
     put:
       consumes:
-        - application/json
+      - application/json
       description: Input pembayaran dan update status jadi SUDAH_BAYAR
       parameters:
-        - description: Order ID
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Payment Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/order.UpdateOrderPaymentRequest"
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Payment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderPaymentRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -383,29 +383,29 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update order payment
       tags:
-        - orders
+      - orders
   /orders/{id}/status:
     put:
       consumes:
-        - application/json
+      - application/json
       description: Update status order (DITERIMA, DIPROSES, SELESAI, DIAMBIL)
       parameters:
-        - description: Order ID
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Status Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/order.UpdateOrderStatusRequest"
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/order.UpdateOrderStatusRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -413,14 +413,14 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update order status
       tags:
-        - orders
+      - orders
   /orders/active:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -430,14 +430,14 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get active orders
       tags:
-        - orders
+      - orders
   /orders/completed:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -447,14 +447,14 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get completed orders
       tags:
-        - orders
+      - orders
   /orders/summary:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -462,14 +462,14 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get order summary
       tags:
-        - orders
+      - orders
   /payments:
     get:
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -479,22 +479,22 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get all payments
       tags:
-        - payments
+      - payments
     post:
       consumes:
-        - application/json
+      - application/json
       parameters:
-        - description: Payment Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/payment.CreatePaymentRequest"
+      - description: Payment Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/payment.CreatePaymentRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -502,18 +502,18 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create payment
       tags:
-        - payments
+      - payments
   /payments/{id}:
     get:
       parameters:
-        - description: Payment ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -521,15 +521,51 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get payment by ID
       tags:
-        - payments
+      - payments
+  /reports/revenue:
+    get:
+      description: Get revenue report by type (weekly, monthly, yearly)
+      parameters:
+      - description: Report Type
+        enum:
+        - weekly
+        - monthly
+        - yearly
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: Month (required for monthly report)
+        in: query
+        name: month
+        type: integer
+      - description: Year (required for monthly/yearly report)
+        in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get revenue report
+      tags:
+      - reports
   /services:
     get:
       description: Ambil semua layanan
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -539,23 +575,23 @@ paths:
               type: object
             type: array
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get all services
       tags:
-        - services
+      - services
     post:
       consumes:
-        - application/json
+      - application/json
       description: Tambah layanan laundry
       parameters:
-        - description: Service Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/service.CreateServiceRequest"
+      - description: Service Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/service.CreateServiceRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -563,19 +599,19 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Create service
       tags:
-        - services
+      - services
   /services/{id}:
     delete:
       description: Soft delete service (is_active = 0)
       parameters:
-        - description: Service ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
       responses:
         "200":
           description: OK
@@ -583,20 +619,20 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Delete service
       tags:
-        - services
+      - services
     get:
       description: Ambil service berdasarkan ID
       parameters:
-        - description: Service ID
-          in: path
-          name: id
-          required: true
-          type: integer
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -604,28 +640,28 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Get service by ID
       tags:
-        - services
+      - services
     put:
       consumes:
-        - application/json
+      - application/json
       description: Update layanan berdasarkan ID
       parameters:
-        - description: Service ID
-          in: path
-          name: id
-          required: true
-          type: integer
-        - description: Service Data
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/service.UpdateServiceRequest"
+      - description: Service ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Service Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateServiceRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
@@ -633,10 +669,10 @@ paths:
             additionalProperties: true
             type: object
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Update service
       tags:
-        - services
+      - services
 securityDefinitions:
   BearerAuth:
     in: header
