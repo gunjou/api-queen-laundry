@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:5050",
+    "host": "api.queenlaundry.com",
     "basePath": "/",
     "paths": {
         "/auth/login": {
