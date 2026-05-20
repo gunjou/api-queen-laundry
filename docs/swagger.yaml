@@ -114,7 +114,7 @@ definitions:
     - nama
     - tipe
     type: object
-host: api.queenlaundry.com
+host: api.queenlaundry.shop
 info:
   contact: {}
   description: API untuk sistem laundry
