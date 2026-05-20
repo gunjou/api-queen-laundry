@@ -18,10 +18,23 @@ func (s *Service) CreateOrder(
 	idCustomer, idService int,
 	berat float64,
 	catatan string,
+	estimasiSelesai string,
+	ongkir float64,
 	metode *string,
 	langsungBayar bool,
 ) (string, error) {
-	return s.repo.CreateOrder(ctx, idCustomer, idService, berat, catatan, metode, langsungBayar)
+
+	return s.repo.CreateOrder(
+		ctx,
+		idCustomer,
+		idService,
+		berat,
+		catatan,
+		estimasiSelesai,
+		ongkir,
+		metode,
+		langsungBayar,
+	)
 }
 
 func (s *Service) GetOrders(ctx context.Context) ([]map[string]interface{}, error) {

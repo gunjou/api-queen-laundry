@@ -948,15 +948,14 @@ const docTemplate = `{
         },
         "order.CreateOrderRequest": {
             "type": "object",
-            "required": [
-                "berat",
-                "id_service"
-            ],
             "properties": {
                 "berat": {
                     "type": "number"
                 },
                 "catatan": {
+                    "type": "string"
+                },
+                "estimasi_selesai": {
                     "type": "string"
                 },
                 "id_customer": {
@@ -970,6 +969,9 @@ const docTemplate = `{
                 },
                 "metode": {
                     "type": "string"
+                },
+                "ongkir": {
+                    "type": "number"
                 }
             }
         },
@@ -1080,7 +1082,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "api.queenlaundry.shop",
+	Host:             "localhost:5050",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Queen Laundry API",

@@ -38,6 +38,8 @@ definitions:
         type: number
       catatan:
         type: string
+      estimasi_selesai:
+        type: string
       id_customer:
         type: integer
       id_service:
@@ -46,9 +48,8 @@ definitions:
         type: boolean
       metode:
         type: string
-    required:
-    - berat
-    - id_service
+      ongkir:
+        type: number
     type: object
   order.UpdateOrderPaymentRequest:
     properties:
@@ -113,7 +114,7 @@ definitions:
     - nama
     - tipe
     type: object
-host: api.queenlaundry.shop
+host: localhost:5050
 info:
   contact: {}
   description: API untuk sistem laundry

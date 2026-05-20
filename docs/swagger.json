@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "api.queenlaundry.shop",
+    "host": "localhost:5050",
     "basePath": "/",
     "paths": {
         "/auth/login": {
@@ -942,15 +942,14 @@
         },
         "order.CreateOrderRequest": {
             "type": "object",
-            "required": [
-                "berat",
-                "id_service"
-            ],
             "properties": {
                 "berat": {
                     "type": "number"
                 },
                 "catatan": {
+                    "type": "string"
+                },
+                "estimasi_selesai": {
                     "type": "string"
                 },
                 "id_customer": {
@@ -964,6 +963,9 @@
                 },
                 "metode": {
                     "type": "string"
+                },
+                "ongkir": {
+                    "type": "number"
                 }
             }
         },

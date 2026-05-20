@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"queen-laundry/pkg/utils"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -23,6 +24,8 @@ func (r *Repository) CreateOrder(
 	idCustomer, idService int,
 	berat float64,
 	catatan string,
+	estimasiSelesai string,
+	ongkir float64,
 	metode *string,
 	langsungBayar bool,
 ) (string, error) {
@@ -35,22 +38,45 @@ func (r *Repository) CreateOrder(
 	}
 	defer tx.Rollback(ctx)
 
-	// ================= AMBIL HARGA =================
+	// ================= PARSE ESTIMASI =================
+	loc, _ := time.LoadLocation("Asia/Makassar")
+
+	estimasiTime, err := time.ParseInLocation(
+		"2006-01-02 15:04:05",
+		estimasiSelesai,
+		loc,
+	)
+
+	if err != nil {
+		return "", fmt.Errorf("invalid estimasi_selesai format")
+	}
+
+	if estimasiTime.Before(now) {
+		return "", fmt.Errorf("estimasi_selesai tidak boleh kurang dari sekarang")
+	}
+
+	// ================= AMBIL HARGA SERVICE =================
 	var hargaService float64
+
 	err = tx.QueryRow(ctx,
 		`SELECT harga FROM services WHERE id_service = $1 AND is_active = 1`,
 		idService,
 	).Scan(&hargaService)
+
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("service not found")
 	}
 
-	hargaFinal := berat * hargaService
+	// ================= HITUNG HARGA =================
+	subtotal := berat * hargaService
+	hargaFinal := subtotal + ongkir
 
+	// ================= GENERATE INVOICE =================
 	invoice := fmt.Sprintf("INV-%s", now.Format("060102150405"))
 
-	// ================= SET PAYMENT STATUS =================
+	// ================= PAYMENT STATUS =================
 	paymentStatus := "BELUM_BAYAR"
+
 	if langsungBayar {
 		paymentStatus = "SUDAH_BAYAR"
 	}
@@ -65,20 +91,25 @@ func (r *Repository) CreateOrder(
 			id_service,
 			berat,
 			harga,
+			subtotal,
+			ongkir,
 			harga_final,
 			order_status,
 			payment_status,
 			catatan,
 			tanggal_masuk,
+			estimasi_selesai,
 			created_at,
 			updated_at
 		)
 		VALUES (
-			$1,$2,$3,$4,$5,$6,
+			$1,$2,$3,$4,$5,$6,$7,$8,
 			'DITERIMA',
-			$7,
-			$8,
-			$9,$9,$9
+			$9,
+			$10,
+			$11,
+			$12,
+			$11,$11
 		)
 		RETURNING id_order, kode_invoice
 	`
@@ -89,18 +120,22 @@ func (r *Repository) CreateOrder(
 		idService,
 		berat,
 		hargaService,
+		subtotal,
+		ongkir,
 		hargaFinal,
 		paymentStatus,
 		catatan,
 		now,
+		estimasiTime,
 	).Scan(&orderID, &invoice)
 
 	if err != nil {
 		return "", err
 	}
 
-	// ================= INSERT PAYMENT (HANYA JIKA BAYAR) =================
+	// ================= AUTO INSERT PAYMENT =================
 	if langsungBayar {
+
 		queryPayment := `
 			INSERT INTO payments (
 				id_order,
@@ -139,7 +174,7 @@ func (r *Repository) CreateOrder(
 func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, error) {
 	query := `
 		SELECT o.id_order, o.kode_invoice, o.berat, o.harga_final,
-		       o.order_status, o.payment_status,
+		       o.order_status, o.payment_status, o.catatan, o.estimasi_selesai, o.subtotal, o.ongkir,
 		       c.nama, s.nama
 		FROM orders o
 		LEFT JOIN customers c ON o.id_customer = c.id_customer
@@ -157,26 +192,46 @@ func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, e
 	var result []map[string]interface{}
 
 	for rows.Next() {
-		var id int
-		var invoice, status, payStatus string
-		var namaCustomer, namaService *string
-		var berat, harga float64
 
-		err := rows.Scan(&id, &invoice, &berat, &harga,
-			&status, &payStatus, &namaCustomer, &namaService)
+		var id int
+		var invoice, status, payStatus, catatan string
+		var namaCustomer, namaService *string
+		var estimasiSelesai *time.Time
+
+		var berat, harga, subtotal, ongkir float64
+
+		err := rows.Scan(
+			&id,
+			&invoice,
+			&berat,
+			&harga,
+			&status,
+			&payStatus,
+			&catatan,
+			&estimasiSelesai,
+			&subtotal,
+			&ongkir,
+			&namaCustomer,
+			&namaService,
+		)
+
 		if err != nil {
 			return nil, err
 		}
 
 		item := map[string]interface{}{
-			"id_order":       id,
-			"kode_invoice":   invoice,
-			"berat":          berat,
-			"harga_final":    harga,
-			"order_status":   status,
-			"payment_status": payStatus,
-			"customer":       namaCustomer,
-			"service":        namaService,
+			"id_order":          id,
+			"kode_invoice":      invoice,
+			"berat":             berat,
+			"harga_final":       harga,
+			"order_status":      status,
+			"payment_status":    payStatus,
+			"catatan":           catatan,
+			"estimasi_selesai":  estimasiSelesai,
+			"subtotal": 	     subtotal,
+			"ongkir":			 ongkir,
+			"customer":          namaCustomer,
+			"service":           namaService,
 		}
 
 		result = append(result, item)
@@ -187,31 +242,97 @@ func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, e
 
 
 // GET ORDER BY ID
-func (r *Repository) GetOrderByID(ctx context.Context, id int) (map[string]interface{}, error) {
+func (r *Repository) GetOrderByID(
+	ctx context.Context,
+	id int,
+) (map[string]interface{}, error) {
+
 	query := `
-		SELECT id_order, kode_invoice, berat, harga_final, order_status, payment_status
-		FROM orders
-		WHERE id_order = $1 AND is_active = 1
+		SELECT
+			o.id_order,
+			o.kode_invoice,
+			o.berat,
+			o.harga,
+			o.subtotal,
+			o.ongkir,
+			o.harga_final,
+			o.order_status,
+			o.payment_status,
+			o.catatan,
+			o.estimasi_selesai,
+			c.nama,
+			s.nama
+		FROM orders o
+		LEFT JOIN customers c
+			ON o.id_customer = c.id_customer
+		JOIN services s
+			ON o.id_service = s.id_service
+		WHERE o.id_order = $1
+		AND o.is_active = 1
 	`
 
 	row := r.db.QueryRow(ctx, query, id)
 
-	var oid int
-	var invoice, status, payStatus string
-	var berat, harga float64
+	var (
+		idOrder int
 
-	err := row.Scan(&oid, &invoice, &berat, &harga, &status, &payStatus)
+		invoice string
+		status string
+		paymentStatus string
+		catatan string
+
+		berat float64
+		harga float64
+		subtotal float64
+		ongkir float64
+		hargaFinal float64
+
+		customer *string
+		service *string
+
+		estimasiSelesai *time.Time
+	)
+
+	err := row.Scan(
+		&idOrder,
+		&invoice,
+		&berat,
+		&harga,
+		&subtotal,
+		&ongkir,
+		&hargaFinal,
+		&status,
+		&paymentStatus,
+		&catatan,
+		&estimasiSelesai,
+		&customer,
+		&service,
+	)
+
 	if err != nil {
 		return nil, err
 	}
 
+	var estimasi interface{}
+
+	if estimasiSelesai != nil {
+		estimasi = estimasiSelesai.Format("2006-01-02 15:04:05")
+	}
+
 	return map[string]interface{}{
-		"id_order":       oid,
-		"kode_invoice":   invoice,
-		"berat":          berat,
-		"harga_final":    harga,
-		"order_status":   status,
-		"payment_status": payStatus,
+		"id_order":         idOrder,
+		"kode_invoice":     invoice,
+		"berat":            berat,
+		"harga":            harga,
+		"subtotal":         subtotal,
+		"ongkir":           ongkir,
+		"harga_final":      hargaFinal,
+		"order_status":     status,
+		"payment_status":   paymentStatus,
+		"catatan":          catatan,
+		"estimasi_selesai": estimasi,
+		"customer":         customer,
+		"service":          service,
 	}, nil
 }
 

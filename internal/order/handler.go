@@ -18,10 +18,13 @@ func NewHandler(service *Service) *Handler {
 // ================= REQUEST =================
 
 type CreateOrderRequest struct {
-	IdCustomer    int     `json:"id_customer"`
-	IdService     int     `json:"id_service" binding:"required"`
-	Berat         float64 `json:"berat" binding:"required"`
-	Catatan       string  `json:"catatan"`
+	IdCustomer       int     `json:"id_customer"`
+	IdService        int     `json:"id_service"`
+	Berat            float64 `json:"berat"`
+	Catatan          string  `json:"catatan"`
+	Ongkir           float64 `json:"ongkir"`
+	EstimasiSelesai  string  `json:"estimasi_selesai"`
+
 	LangsungBayar bool    `json:"langsung_bayar"`
 	Metode        *string `json:"metode"`
 }
@@ -73,6 +76,8 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 		req.IdService,
 		req.Berat,
 		req.Catatan,
+		req.EstimasiSelesai,
+		req.Ongkir,
 		req.Metode,
 		req.LangsungBayar,
 	)
