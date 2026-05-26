@@ -37,8 +37,13 @@ func (s *Service) CreateOrder(
 	)
 }
 
-func (s *Service) GetOrders(ctx context.Context) ([]map[string]interface{}, error) {
-	return s.repo.GetOrders(ctx)
+func (s *Service) GetOrders(
+	ctx context.Context,
+	page int,
+	limit int,
+) ([]map[string]interface{}, int, error) {
+
+	return s.repo.GetOrders(ctx, page, limit)
 }
 
 func (s *Service) GetOrderByID(ctx context.Context, id int) (map[string]interface{}, error) {

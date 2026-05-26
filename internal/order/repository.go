@@ -170,22 +170,56 @@ func (r *Repository) CreateOrder(
 }
 
 
-// GET ALL ORDER
-func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, error) {
-	query := `
-		SELECT o.id_order, o.kode_invoice, o.berat, o.harga_final,
-		       o.order_status, o.payment_status, o.catatan, o.estimasi_selesai, o.subtotal, o.ongkir,
-		       c.nama, s.nama
-		FROM orders o
-		LEFT JOIN customers c ON o.id_customer = c.id_customer
-		JOIN services s ON o.id_service = s.id_service
-		WHERE o.is_active = 1
-		ORDER BY o.id_order DESC
+func (r *Repository) GetOrders(
+	ctx context.Context,
+	page int,
+	limit int,
+) ([]map[string]interface{}, int, error) {
+
+	offset := (page - 1) * limit
+
+	// ================= TOTAL DATA =================
+	var totalData int
+
+	countQuery := `
+		SELECT COUNT(*)
+		FROM orders
+		WHERE is_active = 1
 	`
 
-	rows, err := r.db.Query(ctx, query)
+	err := r.db.QueryRow(ctx, countQuery).Scan(&totalData)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	// ================= MAIN QUERY =================
+	query := `
+		SELECT 
+			o.id_order,
+			o.kode_invoice,
+			o.berat,
+			o.harga_final,
+			o.order_status,
+			o.payment_status,
+			o.catatan,
+			o.estimasi_selesai,
+			o.subtotal,
+			o.ongkir,
+			c.nama,
+			s.nama
+		FROM orders o
+		LEFT JOIN customers c 
+			ON o.id_customer = c.id_customer
+		JOIN services s 
+			ON o.id_service = s.id_service
+		WHERE o.is_active = 1
+		ORDER BY o.id_order DESC
+		LIMIT $1 OFFSET $2
+	`
+
+	rows, err := r.db.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, 0, err
 	}
 	defer rows.Close()
 
@@ -193,12 +227,24 @@ func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, e
 
 	for rows.Next() {
 
-		var id int
-		var invoice, status, payStatus, catatan string
-		var namaCustomer, namaService *string
-		var estimasiSelesai *time.Time
+		var (
+			id int
 
-		var berat, harga, subtotal, ongkir float64
+			invoice string
+			status string
+			payStatus string
+			catatan string
+
+			berat float64
+			harga float64
+			subtotal float64
+			ongkir float64
+
+			namaCustomer *string
+			namaService *string
+
+			estimasiSelesai *time.Time
+		)
 
 		err := rows.Scan(
 			&id,
@@ -216,30 +262,35 @@ func (r *Repository) GetOrders(ctx context.Context) ([]map[string]interface{}, e
 		)
 
 		if err != nil {
-			return nil, err
+			return nil, 0, err
+		}
+
+		var estimasi interface{}
+
+		if estimasiSelesai != nil {
+			estimasi = estimasiSelesai.Format("2006-01-02 15:04:05")
 		}
 
 		item := map[string]interface{}{
-			"id_order":          id,
-			"kode_invoice":      invoice,
-			"berat":             berat,
-			"harga_final":       harga,
-			"order_status":      status,
-			"payment_status":    payStatus,
-			"catatan":           catatan,
-			"estimasi_selesai":  estimasiSelesai,
-			"subtotal": 	     subtotal,
-			"ongkir":			 ongkir,
-			"customer":          namaCustomer,
-			"service":           namaService,
+			"id_order":         id,
+			"kode_invoice":     invoice,
+			"berat":            berat,
+			"harga_final":      harga,
+			"order_status":     status,
+			"payment_status":   payStatus,
+			"catatan":          catatan,
+			"estimasi_selesai": estimasi,
+			"subtotal":         subtotal,
+			"ongkir":           ongkir,
+			"customer":         namaCustomer,
+			"service":          namaService,
 		}
 
 		result = append(result, item)
 	}
 
-	return result, nil
+	return result, totalData, nil
 }
-
 
 // GET ORDER BY ID
 func (r *Repository) GetOrderByID(

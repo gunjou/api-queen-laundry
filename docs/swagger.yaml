@@ -257,16 +257,25 @@ paths:
       - customers
   /orders:
     get:
+      parameters:
+      - default: 1
+        description: Page
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              additionalProperties: true
-              type: object
-            type: array
+            additionalProperties: true
+            type: object
       security:
       - BearerAuth: []
       summary: Get all orders

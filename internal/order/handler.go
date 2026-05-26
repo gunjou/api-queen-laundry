@@ -2,7 +2,9 @@ package order
 
 import (
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -98,16 +100,47 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 // @Tags orders
 // @Produce json
 // @Security BearerAuth
-// @Success 200 {array} map[string]interface{}
+// @Param page query int false "Page" default(1)
+// @Param limit query int false "Limit" default(10)
+// @Success 200 {object} map[string]interface{}
 // @Router /orders [get]
 func (h *Handler) GetOrders(c *gin.Context) {
-	data, err := h.service.GetOrders(c)
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	if page < 1 {
+		page = 1
+	}
+
+	if limit < 1 {
+		limit = 10
+	}
+
+	data, totalData, err := h.service.GetOrders(
+		c,
+		page,
+		limit,
+	)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, data)
+	totalPage := int(math.Ceil(float64(totalData) / float64(limit)))
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": data,
+		"pagination": gin.H{
+			"page":       page,
+			"limit":      limit,
+			"total_data": totalData,
+			"total_page": totalPage,
+		},
+	})
 }
 
 // GetOrderByID godoc
